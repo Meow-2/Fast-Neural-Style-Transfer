@@ -21,8 +21,10 @@ def gram_matrix(y):
     (b, c, h, w) = y.size()
     features = y.view(b, c, w * h)
     features_t = features.transpose(1, 2)
+    # 用于计算两个矩阵的批量乘法, 除以元素个数
     gram = features.bmm(features_t) / (c * h * w)
-    return gram
+    # (b, c, c)
+    return gram 
 
 
 def train_transform(image_size):
@@ -38,9 +40,13 @@ def train_transform(image_size):
     return transform
 
 
+# image_size 是一个整数, 可以将图像的长边调整到该值, 图像长宽比不变
+# 返回的transform是一个转换函数, 可以将图片 resize, ToTensor, Normalize(mean,std)
 def style_transform(image_size=None):
     """ Transforms for style image """
+    # transforms.Resize() 返回的是一个用来 resize 的函数
     resize = [transforms.Resize(image_size)] if image_size else []
+    # transforms.Compose() 可以将多个图像转换函数合在一起构成一个转换序列
     transform = transforms.Compose(resize + [transforms.ToTensor(), transforms.Normalize(mean, std)])
     return transform
 
